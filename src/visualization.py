@@ -1,52 +1,39 @@
 import pygame
-import numpy as np
 
-# Initialize pygame
-pygame.init()
+class Visualizer:
+    def __init__(self, grid_size):
+        self.grid_size = grid_size
+        self.cell_size = 40  # Size of each cell in pixels
+        self.screen = pygame.display.set_mode((self.grid_size * self.cell_size, self.grid_size * self.cell_size + 50))  # Extra space for text
+        pygame.display.set_caption('Fire Spread Simulation')
 
-def visualize_grid(grid, time_step):
-    """Visualize the ship layout with fire spreading, displaying the time step."""
-    size = len(grid)
-    cell_size = 40  # Size of each cell in pixels
-    screen = pygame.display.set_mode((size * cell_size, size * cell_size + 50))  # Extra space for text
-    pygame.display.set_caption('Fire Spread Simulation')
+        # Define colors
+        self.COLORS = {
+            0: (0, 0, 0),       # Blocked (black)
+            1: (255, 255, 255), # Open (white)
+            2: (0, 0, 255),     # Bot (blue)
+            3: (255, 0, 0),     # Fire (red)
+            4: (0, 255, 0)      # Button (green)
+        }
 
-    # Define colors
-    WHITE = (255, 255, 255)  # Open (1)
-    BLACK = (0, 0, 0)        # Closed (0)
-    RED = (255, 0, 0)        # Fire (2)
+        # Ensure font is initialized
+        if not pygame.font.get_init():
+            pygame.font.init()
+        self.font = pygame.font.Font(None, 36)  # Default font, size 36
 
-    # 🔥 Explicitly initialize font here
-    if not pygame.font.get_init():
-        pygame.font.init()
-    font = pygame.font.Font(None, 36)  # Default font, size 36
+    def visualize_grid(self, grid, time_step):
+        """Visualize the ship layout with fire, bot, and button, displaying the time step."""
+        self.screen.fill((255, 255, 255))  # Fill background
 
-    running = True
-    while running:
-        screen.fill(WHITE)  # Fill background with white
-        
         # Draw grid
-        for i in range(size):
-            for j in range(size):
-                # Set color based on grid value
-                if grid[i][j] == 0:
-                    color = BLACK  # Walls
-                elif grid[i][j] == 1:
-                    color = WHITE  # Open path
-                elif grid[i][j] == 2:
-                    color = RED  # Fire
+        for i in range(self.grid_size):
+            for j in range(self.grid_size):
+                color = self.COLORS.get(grid[i][j], (200, 200, 200))  # Default to gray if unknown value
+                pygame.draw.rect(self.screen, color, (j * self.cell_size, i * self.cell_size, self.cell_size, self.cell_size))
+                pygame.draw.rect(self.screen, (128, 128, 128), (j * self.cell_size, i * self.cell_size, self.cell_size, self.cell_size), 1)
 
-                pygame.draw.rect(screen, color, (j * cell_size, i * cell_size, cell_size, cell_size))
-                pygame.draw.rect(screen, (128, 128, 128), (j * cell_size, i * cell_size, cell_size, cell_size), 1)  # Gridlines
+        # Render time step text
+        text_surface = self.font.render(f"Time Step: {time_step}", True, (0, 0, 0))
+        self.screen.blit(text_surface, (10, self.grid_size * self.cell_size + 10))  # Display below the grid
 
-        # Render and display time step text
-        text_surface = font.render(f"Time Step: {time_step}", True, (0, 0, 0))
-        screen.blit(text_surface, (10, size * cell_size + 10))  # Display below the grid
-
-        pygame.display.flip()  # Update the screen
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False  # Exit the loop on quit
-
-    pygame.quit()
+        pygame.display.flip()  # Update screen

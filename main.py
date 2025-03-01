@@ -4,10 +4,9 @@ import random
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 from ship import Ship
 from game import Game
-from visualization import visualize_grid
 
 #Initialize ship size and flammability q
-shipSize = 10  
+shipSize = 30
 q = 0.3
 #Generate the ship
 ship = Ship()
