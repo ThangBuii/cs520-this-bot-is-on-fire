@@ -6,7 +6,7 @@ from ship import Ship
 from game import Game
 
 #Initialize ship size and flammability q
-shipSize = 30
+shipSize = random.randrange(10,40)
 q = 0.3
 #Generate the ship
 ship = Ship()
