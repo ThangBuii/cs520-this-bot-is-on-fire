@@ -25,8 +25,8 @@ class Utils:
     @staticmethod
     def set_cells_value(grid,positions,value):
         size = len(positions)
-        for i in range(size):
-            grid[positions[i]] = value
+        for position in positions:
+            grid[position] = value
         return grid
     
     @staticmethod

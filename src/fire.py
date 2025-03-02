@@ -25,7 +25,7 @@ class Fire:
 
         for x in range(self.D):
             for y in range(self.D):
-                if self.grid[x, y] == CellType.OPEN.value:
+                if self.grid[x, y] != CellType.BLOCKED.value:
                     K = self.count_burning_neighbour(x, y)
                     probability = 1 - (1 - self.q) ** K
                     if random.random() < probability:
@@ -33,14 +33,13 @@ class Fire:
                         newly_burning_cells.append((x, y))
 
         self.grid = new_grid
-        if newly_burning_cells:
-            self.fire_spread_history.append((t,[newly_burning_cells]))
+        self.fire_spread_history.append((t,newly_burning_cells))
 
         return newly_burning_cells
     
     def get_fire_spread_at_t_time(self,t):
         if t < len(self.fire_spread_history):
-            return self.fire_spread_history[t]
+            return self.fire_spread_history[t][1]
         else:
             return []
     
