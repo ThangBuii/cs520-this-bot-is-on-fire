@@ -4,19 +4,22 @@ from utils import Utils
 from model import CellType
 
 class Fire:
-    def __init__(self, grid, q):
+    def __init__(self, grid, q, fire_pos):
         self.grid = grid
         self.D = len(grid)
         self.q = q
+        self.first_position = fire_pos
+        self.fire_spread_history = []
 
-    def initiate_first_position(self, first_position):
-        self.grid[first_position] = CellType.FIRE.value
+        self.grid[self.first_position] = CellType.FIRE.value
+        self.fire_spread_history.append((0,[self.first_position]))
+        self.fire_simulation()
 
     def count_burning_neighbour(self, x, y):
         return sum(1 for nx, ny in Utils.get_neighbours(x, y, self.D)
                    if self.grid[nx, ny] == CellType.FIRE.value)
 
-    def spread_fire(self):
+    def spread_fire(self,t):
         new_grid = np.array(self.grid)
         newly_burning_cells = []
 
@@ -30,4 +33,22 @@ class Fire:
                         newly_burning_cells.append((x, y))
 
         self.grid = new_grid
+        if newly_burning_cells:
+            self.fire_spread_history.append((t,[newly_burning_cells]))
+
         return newly_burning_cells
+    
+    def get_fire_spread_at_t_time(self,t):
+        if t < len(self.fire_spread_history):
+            return self.fire_spread_history[t]
+        else:
+            return []
+    
+    def fire_simulation(self):
+        t = 1
+        while True:
+            if Utils.is_no_more_open_cell(self.grid):
+                break
+            self.spread_fire(t)
+            t += 1
+

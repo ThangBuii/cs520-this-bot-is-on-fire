@@ -15,14 +15,18 @@ class Game:
         bot_pos, self.button_pos, fire_pos = Utils.select_random_positions(self.ship, num_positions=3)
 
         # Initialize bot 1
-        self.bot = Bot1(self.ship, bot_pos, self.button_pos, fire_pos)
+        self.bots = [
+            Bot1(self.ship, bot_pos, self.button_pos, fire_pos),
+            # Bot2(self.ship, bot_pos, self.button_pos, fire_pos),
+            # Bot3(self.ship, bot_pos, self.button_pos, fire_pos),
+            # Bot4(self.ship, bot_pos, self.button_pos, fire_pos),
+        ]
         self.bot1_path = self.bot.bot1_algo()
         self.ship[bot_pos] = CellType.BOT.value
 
         # Initialize fire
-        self.fire = Fire(self.ship, q)
-        self.fire.initiate_first_position(fire_pos)
-
+        self.fire = Fire(self.ship, q, fire_pos)
+        
         # Initialize button
         self.ship[self.button_pos] = CellType.BUTTON.value
 

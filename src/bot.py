@@ -2,16 +2,46 @@ import heapq
 from utils import Utils
 from model import CellType
 
-class Bot1:
+class Bot:
     def __init__(self, ship, start_pos, button_pos, fire_pos):
         self.ship = ship
         self.position = start_pos
         self.button_pos = button_pos
         self.fire_pos = fire_pos
         self.ship[button_pos] = CellType.BUTTON.value
-        self.bot1_path = self.bot1_algo()
+        self.bot_move_history = []
 
-    def bot1_algo(self):
+        self.bot_move_history.append((0,self.position))
+
+    def get_move_at_time_t(self,t,ship = None):
+        raise NotImplementedError("Each bot must define its own pathfinding method.")
+
+    def move(self, t, grid):
+        if t >= len(self.path) - 1:
+            return grid  # If there's no more movement, keep the grid unchanged
+
+        current_pos, next_pos = self.path[t], self.path[t + 1]
+
+        if grid[current_pos] == CellType.FIRE.value or grid[next_pos] == CellType.FIRE.value:
+            return None
+
+        grid[current_pos] = CellType.OPEN.value
+        grid[next_pos] = CellType.BOT.value
+
+        return grid
+
+class Bot1(Bot):
+    def __init__(self, ship, start_pos, button_pos, fire_pos):
+        super().__init__(ship, start_pos, button_pos, fire_pos)
+        self.path = self.plan_path()
+
+    def get_move_at_time_t(self,t,ship=None):
+        if(t < len(self.path)):
+            self.bot_move_history.append((t,self.path[t]))
+            return self.path[t]
+        return None
+
+    def plan_path(self):
         return self.a_star_algo(self.position, self.button_pos)
 
     def a_star_algo(self, start, goal):
@@ -47,17 +77,6 @@ class Bot1:
                         heapq.heappush(open, (f_score[neighbour], neighbour))
 
         return []
-
-    def reached_goal(self):
-        return self.position == self.button_pos
-
-    def move(self, t, grid):
-        current_pos, next_pos = self.bot1_path[t], self.bot1_path[t+1]
-
-        if grid[current_pos] == CellType.FIRE.value or grid[next_pos] == CellType.FIRE.value:
-            return None
-
-        grid[current_pos] = CellType.OPEN.value
-        grid[next_pos] = CellType.BOT.value
-
-        return grid
+    
+# class Bot2(Bot):
+    

@@ -1,5 +1,6 @@
 import random
 from model import CellType
+import numpy as np
 
 class Utils:
     @staticmethod
@@ -40,3 +41,7 @@ class Utils:
     @staticmethod
     def calculate_distance(x,y):
         return abs(x[0] - y[0]) + abs(x[1] - y[1])
+    
+    @staticmethod
+    def is_no_more_open_cell(grid):
+        return not np.any(grid == CellType.OPEN.value)
