@@ -12,6 +12,15 @@ class Utils:
         return neighbors
     
     @staticmethod
+    def get_open_neighbours(x,y,ship):
+        neighbors = []
+        size = len(ship)
+        for nx, ny in [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]:
+            if 0 <= nx < size and 0 <= ny < size and ship[nx,ny] == CellType.OPEN.value:
+                neighbors.append((nx, ny))
+        return neighbors
+    
+    @staticmethod
     def count_open_neighbours(x, y, grid, D):
         return sum(1 for nx, ny in Utils.get_neighbours(x, y,D)
                    if grid[nx, ny] == CellType.OPEN.value)

@@ -15,11 +15,14 @@ class Fire:
         self.fire_spread_history.append((0,[self.first_position]))
         self.fire_simulation()
 
+    # Count the number of burning neigbours of a open cell
     def count_burning_neighbour(self, x, y):
         return sum(1 for nx, ny in Utils.get_neighbours(x, y, self.D)
                    if self.grid[nx, ny] == CellType.FIRE.value)
 
+    # Spread the fire at time t
     def spread_fire(self,t):
+        # Copy the ship layout
         new_grid = np.array(self.grid)
         newly_burning_cells = []
 
@@ -37,12 +40,14 @@ class Fire:
 
         return newly_burning_cells
     
+    # Return the cells caught on fire at time t
     def get_fire_spread_at_t_time(self,t):
         if t < len(self.fire_spread_history):
             return self.fire_spread_history[t][1]
         else:
             return []
     
+    # Run the fire simulation until there is no open cell left
     def fire_simulation(self):
         t = 1
         while True:

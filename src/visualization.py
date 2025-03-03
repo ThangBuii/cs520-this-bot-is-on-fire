@@ -5,7 +5,7 @@ class Visualizer:
         self.grid_size = grid_size
         self.cell_size = 40  # Size of each cell in pixels
         self.screen = pygame.display.set_mode((self.grid_size * self.cell_size, self.grid_size * self.cell_size + 50))  # Extra space for text
-        pygame.display.set_caption('Fire Spread Simulation')
+        pygame.display.set_caption('This bot is on fire')
 
         # Define colors
         self.COLORS = {
@@ -21,7 +21,7 @@ class Visualizer:
             pygame.font.init()
         self.font = pygame.font.Font(None, 36)  # Default font, size 36
 
-    def visualize_grid(self, grid, time_step):
+    def visualize_grid(self, grid, time_step, bot_name):
         """Visualize the ship layout with fire, bot, and button, displaying the time step."""
         self.screen.fill((255, 255, 255))  # Fill background
 
@@ -33,7 +33,7 @@ class Visualizer:
                 pygame.draw.rect(self.screen, (128, 128, 128), (j * self.cell_size, i * self.cell_size, self.cell_size, self.cell_size), 1)
 
         # Render time step text
-        text_surface = self.font.render(f"Time Step: {time_step}", True, (0, 0, 0))
+        text_surface = self.font.render(f"Bot: {bot_name} - Time Step: {time_step}", True, (0, 0, 0))
         self.screen.blit(text_surface, (10, self.grid_size * self.cell_size + 10))  # Display below the grid
 
         pygame.display.flip()  # Update screen
