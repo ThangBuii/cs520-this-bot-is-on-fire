@@ -10,10 +10,14 @@ class Fire:
         self.q = q
         self.first_position = fire_pos
         self.fire_spread_history = []
+        self.mazes = {}
 
         self.grid[self.first_position] = CellType.FIRE.value
+        self.mazes[0] = grid
         self.fire_spread_history.append((0,[self.first_position]))
-        self.fire_simulation()
+    
+    def get_fire_spread_history(self):
+        return self.fire_spread_history
 
     # Count the number of burning neigbours of a open cell
     def count_burning_neighbour(self, x, y):
@@ -26,16 +30,20 @@ class Fire:
         new_grid = np.array(self.grid)
         newly_burning_cells = []
 
-        for x in range(self.D):
-            for y in range(self.D):
-                if self.grid[x, y] != CellType.BLOCKED.value:
-                    K = self.count_burning_neighbour(x, y)
-                    probability = 1 - (1 - self.q) ** K
-                    if random.random() < probability:
-                        new_grid[x, y] = CellType.FIRE.value
-                        newly_burning_cells.append((x, y))
+        #Create flammable cells if it haven't been created
+        if not hasattr(self, "flammable_cells"):
+            self.flammable_cells = [(x, y) for x in range(self.D) for y in range(self.D) if self.grid[x, y] != CellType.BLOCKED.value]
+
+        for x, y in self.flammable_cells[:]:
+            K = self.count_burning_neighbour(x, y)
+            probability = 1 - (1 - self.q) ** K
+            if random.random() < probability:
+                new_grid[x, y] = CellType.FIRE.value
+                newly_burning_cells.append((x, y))
+                self.flammable_cells.remove((x, y))
 
         self.grid = new_grid
+        self.mazes[t] = np.array(self.grid)
         self.fire_spread_history.append((t,newly_burning_cells))
 
         return newly_burning_cells
@@ -45,14 +53,16 @@ class Fire:
         if t < len(self.fire_spread_history):
             return self.fire_spread_history[t][1]
         else:
-            return []
-    
-    # Run the fire simulation until there is no open cell left
-    def fire_simulation(self):
+            newly_burning_cells = self.spread_fire(t)
+            return newly_burning_cells
+
+    #Return mazes(ship layout) until the button caught on fire 
+    def get_mazes_until_button_on_fire(self,button_position):
         t = 1
-        while True:
-            if Utils.is_no_more_open_cell(self.grid):
-                break
+        while self.grid[button_position] != CellType.FIRE.value:
             self.spread_fire(t)
             t += 1
+        
+        return self.mazes
+
 

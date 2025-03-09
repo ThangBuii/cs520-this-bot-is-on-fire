@@ -1,5 +1,6 @@
 from enum import Enum
 
+#Enum of cell types
 class CellType(Enum):
     BLOCKED = 0  
     OPEN = 1     
